@@ -29,7 +29,7 @@ stages:
           $(tag)
     - script: |
         echo "Build ID: $(Build.BuildId)"
-        echo "Tag: $tag"
+        echo "Tag: $(tag)"
 # steps:
 # - script: echo Hello, world!
 #   displayName: 'Run a one-line script'
