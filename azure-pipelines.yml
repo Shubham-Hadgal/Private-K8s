@@ -11,7 +11,7 @@ pool:
 
 variables:
   imageName: 'portfolio'  # Replace with your Docker image name
-  tag: 'latest'  # Use the build ID as the image tag
+  tag: '$(Build.BuildId)'  # Use the build ID as the image tag
 
 stages:
 - stage: BuildAndPush

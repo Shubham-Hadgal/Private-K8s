@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: portfolio
-        image: acrprivateshubh.azurecr.io/portfolio:latest
+        image: acrprivateshubh.azurecr.io/portfolio
         resources:
           limits:
             memory: "64Mi"
