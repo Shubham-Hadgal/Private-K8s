@@ -19,8 +19,6 @@ stages:
   - job: Build
     displayName: 'Build and Push Docker Image'
     steps:
-    - script: |
-        echo "Build ID: $(Build.BuildId)"
     - task: Docker@2
       inputs:
         containerRegistry: 'container-registry-svcon'  # Replace with your ACR service connection name
@@ -29,6 +27,9 @@ stages:
         Dockerfile: '**/Dockerfile'
         tags: |
           $(tag)
+    - script: |
+        echo "Build ID: $(Build.BuildId)"
+        echo "Tag: $tag"
 # steps:
 # - script: echo Hello, world!
 #   displayName: 'Run a one-line script'
