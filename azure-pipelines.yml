@@ -1,10 +1,10 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - manifests/**
 
 pool:
   name: 'Self Hosted Agent'
@@ -30,11 +30,15 @@ stages:
     - script: |
         echo "Build ID: $(Build.BuildId)"
         echo "Tag: $(tag)"
-# steps:
-# - script: echo Hello, world!
-#   displayName: 'Run a one-line script'
+        
+    - script: |
+        sed -i 's|image:.*|image: acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)|' manifests/Deployment.yaml
+      displayName: 'Update image in deployment.yaml'
 
-# - script: |
-#     echo Add other tasks to build, test, and deploy your project.
-#     echo See https://aka.ms/yaml
-#   displayName: 'Run a multi-line script'
+    - script: |
+        git config --global user.email "$(GIT_USER_EMAIL)"
+        git config --global user.name "$(GIT_USER_NAME)"
+        git add .
+        git commit -m "Update image to acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)"
+        git push origin HEAD:$(Build.SourceBranchName)
+      displayName: 'Commit and push changes'
