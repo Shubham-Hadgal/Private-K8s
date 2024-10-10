@@ -36,9 +36,10 @@ stages:
       displayName: 'Update image in deployment.yaml'
 
     - script: |
+        echo "machine dev.azure.com login $(GIT_USER_EMAIL) password $(GIT_PAT)" > ~/.netrc
         git config --global user.email "$(GIT_USER_EMAIL)"
         git config --global user.name "$(GIT_USER_NAME)"
         git add .
         git commit -m "Update image to acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)"
-        git push https://$(GIT_USER_EMAIL):$(GIT_PAT)@dev.azure.com/shubhamhadgal/Private-K8s/_git/Private-K8s HEAD:$(Build.SourceBranchName)
+        git push origin HEAD:$(Build.SourceBranchName)
       displayName: 'Commit and push changes'
