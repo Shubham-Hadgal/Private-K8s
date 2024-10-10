@@ -32,8 +32,8 @@ stages:
         echo "Tag: $(tag)"
         
     - script: |
-        sed -i 's|image:.*|image: acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)|' manifests/deployment.yaml
-      displayName: 'Update image in deployment.yaml'
+        sed -i 's|image:.*|image: acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)|' manifests/Deployment.yaml
+      displayName: 'Update image in Deployment.yaml'
 
     - script: |
         git config --global user.email "$(Build.RequestedForEmail)"
