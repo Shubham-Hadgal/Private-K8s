@@ -40,5 +40,5 @@ stages:
         git config --global user.name "$(GIT_USER_NAME)"
         git add .
         git commit -m "Update image to acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)"
-        git push https://$(GIT_USER_EMAIL):$(GIT_PAT)@dev.azure.com/shubhamhadgal/_git/Private-K8s HEAD:$(Build.SourceBranchName)
+        git push https://$(GIT_USER_NAME):$(GIT_PAT)@dev.azure.com/shubhamhadgal/_git/Private-K8s HEAD:$(Build.SourceBranchName)
       displayName: 'Commit and push changes'
