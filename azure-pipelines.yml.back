@@ -35,7 +35,7 @@ stages:
         sed -i 's|image:.*|image: acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)|' manifests/Deployment.yaml
       displayName: 'Update image in Deployment.yaml'
 
-# Add the variables as secret in pipeline and Will commit the Deployment.yaml file with the identity of the person who's Creds are stored as secret in Azure Devops. Also need to create PAT
+# Add the variables as secret in pipeline and this Will commit the Deployment.yaml file with the identity of the person who's Creds are stored as secret in Azure Devops. Also need to create PAT for authentication
     - script: |
         git config --global user.email "$(GIT_EMAIL)"
         git config --global user.name "$(GIT_USERNAME)"
