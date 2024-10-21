@@ -2,10 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: portfolio
+  namespace: portfolio
 spec:
   selector:
     matchLabels:
       app: portfolio
+  # pod def
   template:
     metadata:
       labels:
