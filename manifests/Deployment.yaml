@@ -13,6 +13,8 @@ spec:
       labels:
         app: portfolio
     spec:
+      imagePullSecrets:
+      - name: portfolio-img-pull-secret
       containers:
       - name: portfolio
         image: acrprivateshubh.azurecr.io/portfolio:198
