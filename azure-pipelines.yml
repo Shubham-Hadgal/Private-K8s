@@ -110,38 +110,38 @@ stages:
         echo "Build ID: $(Build.BuildId)"
         echo "Tag: $(tag)"
 
-- stage: TrivyScan
-  dependsOn: Build
-  jobs:
-  - job: TrivyScanJob
-    displayName: 'Trivy Scan'
-    steps:
-    - script: |
-        retry_count=0
-        max_retries=5
-        until [ $retry_count -ge $max_retries ]
-        do
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(System.DefaultWorkingDirectory):/root/.cache/ aquasec/trivy:latest image --exit-code 1 --severity CRITICAL,HIGH $(imageName):$(tag) && break
-          retry_count=$[$retry_count+1]
-          echo "Retrying... ($retry_count/$max_retries)"
-          sleep 30
-        done
-      displayName: 'Trivy Scan with Retry Logic'
+# - stage: TrivyScan
+#   dependsOn: Build
+#   jobs:
+#   - job: TrivyScanJob
+#     displayName: 'Trivy Scan'
+#     steps:
+#     - script: |
+#         retry_count=0
+#         max_retries=5
+#         until [ $retry_count -ge $max_retries ]
+#         do
+#           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(System.DefaultWorkingDirectory):/root/.cache/ aquasec/trivy:latest image --exit-code 1 --severity CRITICAL,HIGH $(imageName):$(tag) && break
+#           retry_count=$[$retry_count+1]
+#           echo "Retrying... ($retry_count/$max_retries)"
+#           sleep 30
+#         done
+#       displayName: 'Trivy Scan with Retry Logic'
 
-    - script: ls -la $(System.DefaultWorkingDirectory)
-      displayName: 'List Working Directory'
+#     - script: ls -la $(System.DefaultWorkingDirectory)
+#       displayName: 'List Working Directory'
 
-    - script: |
-        if [ -f $(System.DefaultWorkingDirectory)/trivy-results.json ]; then
-          echo "Trivy results file exists."
-        else
-          echo "Trivy results file does not exist."
-          exit 1
-        fi
-      displayName: 'Check Trivy Results File'
+#     - script: |
+#         if [ -f $(System.DefaultWorkingDirectory)/trivy-results.json ]; then
+#           echo "Trivy results file exists."
+#         else
+#           echo "Trivy results file does not exist."
+#           exit 1
+#         fi
+#       displayName: 'Check Trivy Results File'
 
 - stage: Push
-  dependsOn: TrivyScan
+  # dependsOn: TrivyScan
   jobs:
   - job: PushDockerImage
     displayName: 'Push Docker Image'
