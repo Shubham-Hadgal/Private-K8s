@@ -70,7 +70,7 @@ stages:
   - job: SonarQube
     displayName: 'SonarQube Code Analysis'
     steps:
-    - task: SonarQubePrepare@5
+    - task: SonarQubePrepare@7
       inputs:
         SonarQube: 'sonarqube'
         scannerMode: 'CLI'
@@ -85,9 +85,9 @@ stages:
           sonar.projectVersion=$(SONARQUBE_PROJECT_VERSION)
           sonar.sources=.
 
-    - task: SonarQubeAnalyze@5
+    - task: SonarQubeAnalyze@7
 
-    - task: SonarQubePublish@5
+    - task: SonarQubePublish@7
       inputs:
         pollingTimeoutSec: '300'
 
