@@ -109,8 +109,21 @@ stages:
         echo "Build ID: $(Build.BuildId)"
         echo "Tag: $(tag)"
 
-- stage: Push
+- stage: TrivyScan
   dependsOn: Build
+  jobs:
+  - job: TrivyScanJob
+    displayName: 'Trivy Scan'
+    steps:
+    - task: trivy@1
+      displayName: 'Trivy Scan'
+      inputs:
+        image: '$(imageName):$(tag)'
+        severities: 'CRITICAL,HIGH'
+        exitCode: '1'
+
+- stage: Push
+  dependsOn: TrivyScan
   jobs:
   - job: PushDockerImage
     displayName: 'Push Docker Image'
