@@ -109,6 +109,16 @@ stages:
         echo "Build ID: $(Build.BuildId)"
         echo "Tag: $(tag)"
 
+- stage: TrivyScan
+  dependsOn: Build
+  jobs:
+  - job: TrivyScanJob
+    displayName: 'Trivy Vulnerability Scan'
+    steps:
+    - script: |
+        trivy image --exit-code 1 --severity CRITICAL,HIGH $(imageName):$(tag)
+      displayName: 'Run Trivy Scan'
+
 - stage: Push
   dependsOn: Build
   jobs:
