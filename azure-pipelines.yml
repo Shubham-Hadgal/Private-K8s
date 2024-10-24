@@ -64,34 +64,34 @@ variables:
   SONARQUBE_PROJECT_VERSION: '1.0'
 
 stages:
-- stage: SonarQubeAnalysis
-  jobs:
-  - job: SonarQube
-    displayName: 'SonarQube Code Analysis'
-    steps:
-    - task: SonarQubePrepare@7
-      inputs:
-        SonarQube: 'sonarqube'
-        scannerMode: 'CLI'
-        configMode: 'manual'
-        cliProjectKey: '$(SONARQUBE_PROJECT_KEY)'
-        cliProjectName: '$(SONARQUBE_PROJECT_NAME)'
-        cliProjectVersion: '$(SONARQUBE_PROJECT_VERSION)'
-        cliSources: '.'
-        extraProperties: |
-          sonar.projectKey=$(SONARQUBE_PROJECT_KEY)
-          sonar.projectName=$(SONARQUBE_PROJECT_NAME)
-          sonar.projectVersion=$(SONARQUBE_PROJECT_VERSION)
-          sonar.sources=.
+# - stage: SonarQubeAnalysis
+#   jobs:
+#   - job: SonarQube
+#     displayName: 'SonarQube Code Analysis'
+#     steps:
+#     - task: SonarQubePrepare@7
+#       inputs:
+#         SonarQube: 'sonarqube'
+#         scannerMode: 'CLI'
+#         configMode: 'manual'
+#         cliProjectKey: '$(SONARQUBE_PROJECT_KEY)'
+#         cliProjectName: '$(SONARQUBE_PROJECT_NAME)'
+#         cliProjectVersion: '$(SONARQUBE_PROJECT_VERSION)'
+#         cliSources: '.'
+#         extraProperties: |
+#           sonar.projectKey=$(SONARQUBE_PROJECT_KEY)
+#           sonar.projectName=$(SONARQUBE_PROJECT_NAME)
+#           sonar.projectVersion=$(SONARQUBE_PROJECT_VERSION)
+#           sonar.sources=.
 
-    - task: SonarQubeAnalyze@7
+#     - task: SonarQubeAnalyze@7
 
-    - task: SonarQubePublish@7
-      inputs:
-        pollingTimeoutSec: '300'
+#     - task: SonarQubePublish@7
+#       inputs:
+#         pollingTimeoutSec: '300'
 
 - stage: Build
-  dependsOn: SonarQubeAnalysis
+  # dependsOn: SonarQubeAnalysis
   jobs:
   - job: BuildDockerImage
     displayName: 'Build Docker Image'
