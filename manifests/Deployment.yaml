@@ -23,8 +23,8 @@ spec:
             memory: 2Mi
             cpu: "1m"
           limits:
-            memory: "2Mi"
-            cpu: "1m"
+            memory: "10Mi"
+            cpu: "5m"
         ports:
         - containerPort: 80
 # 
