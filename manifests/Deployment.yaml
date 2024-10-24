@@ -27,4 +27,3 @@ spec:
             cpu: "10m"
         ports:
         - containerPort: 80
-# 
