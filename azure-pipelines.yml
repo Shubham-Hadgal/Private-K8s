@@ -110,7 +110,7 @@ stages:
 #         echo "Tag: $(tag)"
 
 - stage: TrivyScan
-  dependsOn: Build
+  # dependsOn: Build
   jobs:
   - job: TrivyScanJob
     displayName: 'Trivy Vulnerability Scan'
