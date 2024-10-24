@@ -20,11 +20,11 @@ spec:
         image: acrprivateshubh.azurecr.io/portfolio:214
         resources:
           requests: 
-            memory: 2Mi
-            cpu: "1m"
+            memory: 200Mi
+            cpu: "250m"
           limits:
-            memory: "10Mi"
-            cpu: "5m"
+            memory: "250Mi"
+            cpu: "500m"
         ports:
         - containerPort: 80
 # 
