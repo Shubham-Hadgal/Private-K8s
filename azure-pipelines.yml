@@ -69,6 +69,9 @@ stages:
   - job: SonarQube
     displayName: 'SonarQube Code Analysis'
     steps:
+    - script: |
+        sudo chmod -R 755 /home/azureuser/selfhostedagent/_work/1/s/trivy
+      displayName: 'Adjust Permissions'
     - task: SonarQubePrepare@7
       inputs:
         SonarQube: 'sonarqube'
