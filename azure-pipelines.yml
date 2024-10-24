@@ -45,6 +45,7 @@
 #       displayName: 'Commit and push changes'
 #       env:
 #         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
 trigger:
   branches:
     include:
@@ -141,7 +142,7 @@ stages:
 #       displayName: 'Check Trivy Results File'
 
 - stage: Push
-  # dependsOn: TrivyScan
+  dependsOn: Build
   jobs:
   - job: PushDockerImage
     displayName: 'Push Docker Image'
