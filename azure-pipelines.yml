@@ -1,3 +1,51 @@
+# trigger:
+#   branches:
+#     include:
+#       - main
+#   paths:
+#     exclude:
+#       - manifests/**
+
+# pool:
+#   name: 'Self Hosted Agent'
+
+# variables:
+#   imageName: 'portfolio'  # Replace with your Docker image name
+#   tag: '$(Build.BuildId)'  # Use the build ID as the image tag
+
+# stages:
+# - stage: BuildAndPush
+#   jobs:
+#   - job: Build
+#     displayName: 'Build and Push Docker Image'
+#     steps:
+#     - task: Docker@2
+#       inputs:
+#         containerRegistry: 'container-registry-svcon'  # Replace with your ACR service connection name
+#         repository: '$(imageName)'
+#         command: 'buildAndPush'
+#         Dockerfile: '**/Dockerfile'
+#         tags: |
+#           $(tag)
+#     - script: |
+#         echo "Build ID: $(Build.BuildId)"
+#         echo "Tag: $(tag)"
+        
+#     - script: |
+#         sed -i 's|image:.*|image: acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)|' manifests/Deployment.yaml
+#       displayName: 'Update image with Build ID: $(Build.BuildId) in Deployment.yaml'
+
+# # Will commit the Deployment.yaml file with the identity of the person who triggered this pipeline
+#     - script: |
+#         git config --global user.email "$(Build.RequestedForEmail)"
+#         git config --global user.name "$(Build.RequestedFor)"
+#         git add .
+#         git commit -m "Update image to acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)"
+#         git push https://$(System.AccessToken)@dev.azure.com/shubhamhadgal/_git/Private-K8s HEAD:$(Build.SourceBranchName)
+#       displayName: 'Commit and push changes'
+#       env:
+#         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
 trigger:
   branches:
     include:
@@ -12,9 +60,39 @@ pool:
 variables:
   imageName: 'portfolio'  # Replace with your Docker image name
   tag: '$(Build.BuildId)'  # Use the build ID as the image tag
+  SONARQUBE_PROJECT_KEY: 'portfolio'
+  SONARQUBE_PROJECT_NAME: 'portfolio'
+  SONARQUBE_PROJECT_VERSION: '1.0'
 
 stages:
+- stage: SonarQubeAnalysis
+  jobs:
+  - job: SonarQube
+    displayName: 'SonarQube Code Analysis'
+    steps:
+    - task: SonarQubePrepare@5
+      inputs:
+        SonarQube: 'sonarqube'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: '$(SONARQUBE_PROJECT_KEY)'
+        cliProjectName: '$(SONARQUBE_PROJECT_NAME)'
+        cliProjectVersion: '$(SONARQUBE_PROJECT_VERSION)'
+        cliSources: '.'
+        extraProperties: |
+          sonar.projectKey=$(SONARQUBE_PROJECT_KEY)
+          sonar.projectName=$(SONARQUBE_PROJECT_NAME)
+          sonar.projectVersion=$(SONARQUBE_PROJECT_VERSION)
+          sonar.sources=.
+
+    - task: SonarQubeAnalyze@5
+
+    - task: SonarQubePublish@5
+      inputs:
+        pollingTimeoutSec: '300'
+
 - stage: BuildAndPush
+  dependsOn: SonarQubeAnalysis
   jobs:
   - job: Build
     displayName: 'Build and Push Docker Image'
@@ -27,6 +105,7 @@ stages:
         Dockerfile: '**/Dockerfile'
         tags: |
           $(tag)
+
     - script: |
         echo "Build ID: $(Build.BuildId)"
         echo "Tag: $(tag)"
@@ -35,7 +114,6 @@ stages:
         sed -i 's|image:.*|image: acrprivateshubh.azurecr.io/portfolio:$(Build.BuildId)|' manifests/Deployment.yaml
       displayName: 'Update image with Build ID: $(Build.BuildId) in Deployment.yaml'
 
-# Will commit the Deployment.yaml file with the identity of the person who triggered this pipeline
     - script: |
         git config --global user.email "$(Build.RequestedForEmail)"
         git config --global user.name "$(Build.RequestedFor)"
