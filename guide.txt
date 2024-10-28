@@ -1,0 +1,118 @@
+Azure DevOps and Kubernetes
+
+CI - 
+Step 1: Create self hosted Agent - 
+Steps involved in creating a Self Hosted Agent
+a.Create a Linux VM
+b.Create a PAT(Personal Access Token) token
+c.Configure the VM as a Self Hosted Agent
+d.Use self-hosted agent in Azure YAML Pipeline
+
+https://medium.com/@prasad.reddy0708/setup-linux-self-hosted-agent-for-pipelines-in-azure-devops-8c8ad6c695a3
+
+After step1 : execute this command to make service run continuously sudo ./svc.sh start
+
+
+Follow this doc for accessing ACR from AgentVM - https://github.com/shubhamagrawal17/Private-ACR-with-self-hosted-Agent
+
+Connect ACR with azure pipeline.
+Create the service connection for ACR
+a)Use username and password from ACR access keys
+If you want to access ACR from any VM - 
+Create VNet Peering.
+Assign MSI to VM.
+Create private links in private DNS zone in azure for new VNet.
+Access ACR using az login --identity.
+
+For accessing the registry from VM using VMs Managed identity - https://learn.microsoft.com/en-us/azure/container-registry/container-registry-authentication-managed-identity?tabs=azure-cli#configure-the-vm-with-a-system-managed-identity-1
+
+Creating K8s Cluster 
+
+1.Create RG
+2.Create VNET
+3.Create K8s cluster
+4.Create a VM for accessing the cluster (VM should be in same VNET for accessing that cluster)
+
+Note: Push the code to git (with docker file)
+
+
+CD - 
+To access the ACR from cluster 
+If ACR and AKS are in different VNET most important step is - 
+1. Peer the ACR and AKS VNET 
+2.add private network link in the ACR’s private dns zone for AKS vnet
+Command to check connectivity using AKS managed identity - 
+Add role to AKS MI - AcrPull in ACR IAM.
+az aks check-acr -g <AKS-rg-name> -n <cluster-name> --acr acrprivateshubh.azurecr.io
+We can also use k8s docker registry secret for authenticating to ACR. reference - https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ - kubectl create secret docker-registry portfolio-img-pull-secret --namespace=shubhtest --docker-server=https://acrprivateshubh.azurecr.io --docker-username=AcrPrivateShubh --docker-password=<acr-password>
+Installing Nginx Ingress controller  - https://spacelift.io/blog/kubernetes-ingress
+Deploying the application to the cluster using argocd
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+kubectl get svc argocd-server -n argocd
+Access the browser
+Username - admin
+Pass: 5KyLD59dw9kHp7hw
+Connect the Repo with Argocd
+Choose https - enter the repo link
+Select project as default
+Provide username and password (get from Azure repo)
+
+Click connect
+Create Argocd application
+Go to AKS cluster create docker secret for pulling image - kubectl create secret docker-registry portfolio-img-pull-secret --namespace=portfolio --docker-server=https://acrprivateshubh.azurecr.io --docker-username=AcrPrivateShubh --docker-password=<acr-password>
+Edit deployment file to use the above created secret
+Do force sync in Argocd
+Access the ingress controllers public IP
+---------------------------------------------------------------------------------
+Argo CD’s auto-sync feature operates based on the Application reconciliation timeout. By default, this timeout period is set to 3 minutes (180 seconds)12. This means Argo CD checks for changes in the Git repository every 3 minutes and applies any detected changes to the Kubernetes cluster.
+You can adjust this interval by modifying the timeout.reconciliation value in the argocd-cm ConfigMap(if property not present then add it) “5s” for 5 sec
+Next restart the argo cd - 
+kubectl rollout restart deployment argocd-server -n argocd - restart argocd server
+kubectl get pod argocd-application-controller-0 -n argocd -o yaml > app-cont.yaml - get current pod def for argocd-application-controller-0
+kubectl delete pod argocd-application-controller-0 -n argocd - delete the pod
+k apply -f app-cont.yaml - recreate the above pod
+kubectl logs -n argocd argocd-application-controller-0 -f - validate if time interval changed to required time. For eg: It will update logs every 5 sec
+
+Install Sonarqube on the cluster
+Install Helm - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+Add sonarqube to helm repo - 
+helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
+helm repo update
+Create NS - kubectl create namespace sonarqube
+Deploy Sqube using helm - helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube
+To modify helm values - create values.yaml file and add required details
+service:
+  type: LoadBalancer
+  externalPort: 9000
+  internalPort: 9000
+Apply the above values - helm upgrade --install -n sonarqube sonarqube sonarqube/sonarqube -f values.yaml
+Access the sonarqube - kubectl get services -n sonarqube
+
+1. Install the SonarQube Extension in Azure DevOps
+First, you need to install the SonarQube extension from the Azure DevOps marketplace:
+
+Navigate to your Azure DevOps project.
+Go to Project settings > Extensions.
+Search for “SonarQube” and install the extension.
+2. Create a Service Connection
+You need to create a service connection to allow Azure DevOps to communicate with your SonarQube server:
+
+Go to Project settings > Service connections.
+Click on New service connection and select SonarQube.
+Enter the required details:
+SonarQube Server URL: The URL of your SonarQube instance.
+Token: A token generated from your SonarQube instance (you can create this in SonarQube under My Account > Security > Generate Tokens).
+
+Edit the pipeline script and add sonarqube tasks - (Java 17 should be installed on self hosted agent)
+
+Next Create a local project in sonarqube 
+	Provide Project name and key and use the same in pipeline script.
+Click create
+Run the pipeline.
+
+To install Trivy
+	Install trivy on your self hosted agent - requires root user
+	Reference - https://k21academy.com/docker-kubernetes/docker-image-vulnerabilities/
+	
