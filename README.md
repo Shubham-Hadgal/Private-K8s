@@ -56,21 +56,21 @@ When Azure resources are deployed in a Virtual Network (VNet) with Private Endpo
    - For more detailed steps on setting up a Linux self-hosted agent, refer to this article (https://medium.com/@prasad.reddy0708/setup-linux-self-hosted-agent-for-pipelines-in-azure-devops-8c8ad6c695a3).
   
 5. **Creating Private ACR:**
-   - Steps to Create Private ACR
-   - 1. Create a Service Connection:
-     2. Go to Azure DevOps > Project Settings > Service Connections.
-     3. Use Managed Identity or Service Principal for the connection.
-     4. Create Virtual Networks:
-     5. Create two VNets: one for the self-hosted agent and another for the private ACR.
-     6. Create VNet Peering:
-     7. Establish peering between the two VNets.
-     8. Create the Agent VM:
-     9. Create a VM in the same VNet as your ACR and configure SSH access.
-     10. Configure ACR:
-     11. Create a Private ACR using the Azure Portal, ensuring that the network section allows for private access.
-     12. Connect ACR with Azure Pipeline:
-     13. Create a service connection for ACR using the username and password from ACR access keys.
-     14. If you want to access ACR from any VM:
+   - *Steps to Create Private ACR*
+   - Create a Service Connection:
+   - Go to Azure DevOps > Project Settings > Service Connections.
+   - Use Managed Identity or Service Principal for the connection.
+   - Create Virtual Networks:
+   - Create two VNets: one for the self-hosted agent and another for the private ACR.
+   - Create VNet Peering:
+   - Establish peering between the two VNets.
+   - Create the Agent VM:
+   - Create a VM in the same VNet as your ACR and configure SSH access.
+   - Configure ACR:
+   - Create a Private ACR using the Azure Portal, ensuring that the network section allows for private access.
+   - Connect ACR with Azure Pipeline:
+   - Create a service connection for ACR using the username and password from ACR access keys.
+   - If you want to access ACR from any VM:
             Create VNet Peering.
             Assign a Managed Identity to the VM.
             Create private links in the Azure private DNS zone.
