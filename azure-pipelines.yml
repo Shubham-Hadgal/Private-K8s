@@ -64,63 +64,63 @@ variables:
   SONARQUBE_PROJECT_VERSION: '1.0'
 
 stages:
-# - stage: SonarQubeAnalysis
-#   jobs:
-#   - job: SonarQube
-#     displayName: 'SonarQube Code Analysis'
-#     steps:
-#     - task: SonarQubePrepare@7
-#       inputs:
-#         SonarQube: 'sonarqube'
-#         scannerMode: 'CLI'
-#         configMode: 'manual'
-#         cliProjectKey: '$(SONARQUBE_PROJECT_KEY)'
-#         cliProjectName: '$(SONARQUBE_PROJECT_NAME)'
-#         cliProjectVersion: '$(SONARQUBE_PROJECT_VERSION)'
-#         cliSources: '.'
-#         extraProperties: |
-#           sonar.projectKey=$(SONARQUBE_PROJECT_KEY)
-#           sonar.projectName=$(SONARQUBE_PROJECT_NAME)
-#           sonar.projectVersion=$(SONARQUBE_PROJECT_VERSION)
-#           sonar.sources=.
-
-#     - task: SonarQubeAnalyze@7
-
-#     - task: SonarQubePublish@7
-#       inputs:
-#         pollingTimeoutSec: '300'
-
-# - stage: Build
-#   dependsOn: SonarQubeAnalysis
-#   jobs:
-#   - job: BuildDockerImage
-#     displayName: 'Build Docker Image'
-#     steps:
-#     - task: Docker@2
-#       inputs:
-#         containerRegistry: 'container-registry-svcon'  # Replace with your ACR service connection name
-#         repository: '$(imageName)'
-#         command: 'build'
-#         Dockerfile: '**/Dockerfile'
-#         tags: |
-#           $(tag)
-
-#     - script: |
-#         echo "Build ID: $(Build.BuildId)"
-#         echo "Tag: $(tag)"
-
-- stage: TrivyScan
-  # dependsOn: Build
+- stage: SonarQubeAnalysis
   jobs:
-  - job: TrivyScanJob
-    displayName: 'Trivy Vulnerability Scan'
+  - job: SonarQube
+    displayName: 'SonarQube Code Analysis'
     steps:
+    - task: SonarQubePrepare@7
+      inputs:
+        SonarQube: 'sonarqube'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: '$(SONARQUBE_PROJECT_KEY)'
+        cliProjectName: '$(SONARQUBE_PROJECT_NAME)'
+        cliProjectVersion: '$(SONARQUBE_PROJECT_VERSION)'
+        cliSources: '.'
+        extraProperties: |
+          sonar.projectKey=$(SONARQUBE_PROJECT_KEY)
+          sonar.projectName=$(SONARQUBE_PROJECT_NAME)
+          sonar.projectVersion=$(SONARQUBE_PROJECT_VERSION)
+          sonar.sources=.
+
+    - task: SonarQubeAnalyze@7
+
+    - task: SonarQubePublish@7
+      inputs:
+        pollingTimeoutSec: '300'
+
+- stage: Build
+  dependsOn: SonarQubeAnalysis
+  jobs:
+  - job: BuildDockerImage
+    displayName: 'Build Docker Image'
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'container-registry-svcon'  # Replace with your ACR service connection name
+        repository: '$(imageName)'
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+        tags: |
+          $(tag)
+
     - script: |
-        sudo trivy image nginx:latest
-      displayName: 'Run Trivy Scan'
+        echo "Build ID: $(Build.BuildId)"
+        echo "Tag: $(tag)"
+
+# - stage: TrivyScan
+#   # dependsOn: Build
+#   jobs:
+#   - job: TrivyScanJob
+#     displayName: 'Trivy Vulnerability Scan'
+#     steps:
+#     - script: |
+#         sudo trivy image nginx:latest
+#       displayName: 'Run Trivy Scan'
 
 - stage: Push
-  dependsOn: TrivyScan
+  dependsOn: Build
   jobs:
   - job: PushDockerImage
     displayName: 'Push Docker Image'
