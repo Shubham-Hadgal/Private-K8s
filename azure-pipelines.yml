@@ -116,7 +116,7 @@ stages:
     displayName: 'Trivy Vulnerability Scan'
     steps:
     - script: |
-        sudo trivy image nginx:latest
+        sudo trivy image $(imageName):$(Tag)
       displayName: 'Run Trivy Scan'
 
 - stage: Push
