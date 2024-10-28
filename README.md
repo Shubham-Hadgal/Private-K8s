@@ -71,10 +71,10 @@ When Azure resources are deployed in a Virtual Network (VNet) with Private Endpo
    - Connect ACR with Azure Pipeline:
    - Create a service connection for ACR using the username and password from ACR access keys.
    - If you want to access ACR from any VM:
-            Create VNet Peering.
-            Assign a Managed Identity to the VM.
-            Create private links in the Azure private DNS zone.
-     For accessing the registry from VM using Managed Identity, refer to the documentation (https://learn.microsoft.com/en-us/azure/container-registry/container-registry-authentication-managed-identity?tabs=azure-cli#configure-the-vm-with-a-system-managed-identity-1).
+   - 1. Create VNet Peering.
+     2. Assign a Managed Identity to the VM.
+     3. Create private links in the Azure private DNS zone.
+     4. For accessing the registry from VM using Managed Identity, refer to the documentation (https://learn.microsoft.com/en-us/azure/container-registry/container-registry-authentication-managed-identity?tabs=azure-cli#configure-the-vm-with-a-system-managed-identity-1).
 
 6. **Creating AKS Cluster**
    - Steps to Create AKS Cluster
