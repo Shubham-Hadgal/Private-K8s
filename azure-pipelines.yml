@@ -116,7 +116,7 @@ stages:
     displayName: 'Trivy Vulnerability Scan'
     steps:
     - script: |
-        sudo trivy image $(imageName):$(Tag)
+        sudo trivy image acrprivateshubh.azurecr.io/$(imageName):$(Tag)
       displayName: 'Run Trivy Scan'
 
 - stage: Push
