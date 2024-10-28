@@ -23,8 +23,13 @@ When Azure resources are deployed in a Virtual Network (VNet) with Private Endpo
    - Search for Virtual Machines and configure your VM as shown in the screenshots below.
    - Download the private key; you will need this to log in to the VM.
 
-2. **Create a PAT (Personal Access Token):**
+2. **Configure Self Hosted Agent**
    - Follow the steps to create a PAT token for authentication from the VM to the Azure DevOps portal.
+  
+   - Goto Organization setting > Aget pools > Add pool > Self hosted > Provide a name & description to agent pool and click on Create button.
+   - As you can see, a new Agent Pool is created. Make a note of the Agent Pool Name as we will be using the same name in YAML pipeline in pool definition.
+   - Now, lets create a New agent under the Agent Pool.
+   - 1. Click on Agent Pool > New Agent > Select Linux > Follow the instruction
 
 3. **Configure the VM as a Self-Hosted Agent:**
    - Install the agent on the VM.
