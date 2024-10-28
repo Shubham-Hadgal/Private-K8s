@@ -17,7 +17,7 @@ spec:
       - name: portfolio-img-pull-secret
       containers:
       - name: portfolio
-        image: acrprivateshubh.azurecr.io/portfolio:237
+        image: acrprivateshubh.azurecr.io/portfolio:238
         resources:
           requests: 
             memory: 32Mi
