@@ -109,18 +109,18 @@ stages:
         echo "Build ID: $(Build.BuildId)"
         echo "Tag: $(tag)"
 
-# - stage: TrivyScan
-#   # dependsOn: Build
-#   jobs:
-#   - job: TrivyScanJob
-#     displayName: 'Trivy Vulnerability Scan'
-#     steps:
-#     - script: |
-#         sudo trivy image nginx:latest
-#       displayName: 'Run Trivy Scan'
+- stage: TrivyScan
+  dependsOn: Build
+  jobs:
+  - job: TrivyScanJob
+    displayName: 'Trivy Vulnerability Scan'
+    steps:
+    - script: |
+        sudo trivy image nginx:latest
+      displayName: 'Run Trivy Scan'
 
 - stage: Push
-  dependsOn: Build
+  dependsOn: TrivyScan
   jobs:
   - job: PushDockerImage
     displayName: 'Push Docker Image'
