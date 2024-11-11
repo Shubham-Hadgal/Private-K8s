@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: portfolio
-  namespace: portfolio
+  name: go-green
+  namespace: go-green
 spec:
   selector:
     matchLabels:
-      app: portfolio
+      app: go-green
   # pod def
   template:
     metadata:
       labels:
-        app: portfolio
+        app: go-green
     spec:
       imagePullSecrets:
-      - name: portfolio-img-pull-secret
+      - name: gogreen-img-pull-secret
       containers:
-      - name: portfolio
-        image: acrprivateshubh.azurecr.io/portfolio:242
+      - name: go-green
+        image: acrprivateshubh.azurecr.io/green:336
         resources:
           requests: 
             memory: 32Mi
